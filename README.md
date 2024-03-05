@@ -7,7 +7,7 @@ Transcriptome-wide association studies (TWAS) have been successful in identifyin
 
 ## Methods
 
-### Step I:cis-eQTL discovery of TFs
+### Step I: cis-eQTL discovery of TFs
 To determine a set of the cis-regulatory variants that potentially regulate TF expression (namely TF-cis-regulatory-variants), we first prioritized putative regulatory variants by only including TF-occupied variants that are located in DNase I hypersensitive sites (DHSs) (https://www.meuleman.org/research/dhsindex/), enhancer regions (http://compbio.mit.edu/epimap) and promoter regions (https://fantom.gsc.riken.jp/5/data/). Of them, the significant associations between a TF and its cis-genetic variants were identified at a nominal p-value < 0.05, based on the eQTL analysis in both target tissues and whole blood samples using data from GTEx portal (https://www.gtexportal.org/home/datasets/) and eQTLGen (https://www.eqtlgen.org/cis-eqtls.html). Furthermore, we also analyzed epigenetic data to search regulating evidence by these variants through interactions with proximal promoters or distal enhancer-promoter regions. Specifically, we examined if these variants are located in the promoter region of a TF (TSS +/- 2K) or enhance region with an evidence of the enhancer linking to the TF based on expression-enhancer activity correlation across 833 cell-types from the EpiMap repository (https://personal.broadinstitute.org/cboix/epimap/links/links_corr_only/), as well as chromatin-chromatin interaction data from the 4D genomics (https://4dgenome.research.chop.edu/Tables/4DGenome_HomoSapiens_hg19.txt) and previous literature[1]. Finally, the TF-cis-regulatory-variants were identified based on the significant associations from eQTL results, and the regulatory evidence from the variants linked to the TF. 
 
 `./code/WriteTFeQTL.py`
@@ -19,13 +19,15 @@ We next characterized each gene potentially regulated by all possible susceptibl
 
 For each gene, we prepared a csv file that contains all TF-based trans-variants (TFx) for all TF-genes that regulate this target gene with the format as below:
 
-TF,CHR,LOC,ID-1,ID-2,ID-3,ID-4,ID-5, … … 
+TF,CHR,LOC,ID-1,ID-2,ID-3,ID-4,ID-5, … …
+
 GREB1_1,2,10494090,0,0,0,0,0,0,0,1, … … 
+
 GREB1_2,2,10494743,2,1,1,1,1,2,0,2, … … 
-… … 
+
 FOXA1_1,14,37708623,0,0,0,1,1,1,0, … … 
+
 FOXA1_2,14,37709692,0,1,0,1,0,1,0, … … 
-… …
 
 **Prepare other input data** \
 **1) Gene expression file** \
@@ -43,10 +45,13 @@ Take the breast cancer as an example. We prioritized putative regulatory variant
 The tissue specific input genotype file ("genotype_file") with the format as below:
 
 CHR,LOC,ID-1,ID-2,ID-3,ID-4,ID-5, … … 
+
 1,629906,0,0,0,0,0,0,0,0,1,0, … … 
+
 1,630026,1,0,0,2,1,0,0,0,2,1, … … 
+
 1,778639,0,0,0,0,0,0,0,0,0,0, … … 
-… …
+
 
 The input genotype file for calculating covariance ("covariance_genotype_file") should be non-tissue specific, with the same format as the tissue specific input genotype file.
 
@@ -54,10 +59,14 @@ The input genotype file for calculating covariance ("covariance_genotype_file") 
 The input snp annotation file ("snp_annot_file"), contains only the top 50K regulatory variants with the format as below:
 
 SNP,varID,chr,pos,ref,effect 
+
 rs1578391,chr1_629906_C_T_b38,1,629906,C,T 
+
 rs6594029,chr1_630026_C_T_b38,1,630026,C,T 
+
 rs114983708,chr1_778639_A_G_b38,1,778639,A,G 
-… …
+
+
 
 **4) Gene annotation file:** \
 The input gene annot file ("gene_annot_file") is downloaded from GENCODE: https://www.gencodegenes.org/human/release_26.html, in the GTF format and build in GRCh38.
@@ -69,6 +78,7 @@ The input GWAS file ("gwas_file") contains "chr" and "position" columns, we just
 For each TF, we evaluated the performance of a prediction model that utilized its TF-cis-regulatory variants to predict the expression of each target gene using the Group Lasso method. A Group Lasso was trained to select a group of TF-cis-regulatory variants from each TF (i.e., 1 to G TF). Only significant models were utilized to determine groups of TF-cis-regulatory variants that potentially affected the expression of the gene. The final set of TF-cis-regulatory variants was identified for downstream gene expression model building by combining the groups from significant models. Subsequently, we constructed gene expression prediction models for the final sets of TF-cis-regulatory variants and cis TF-occupied variants using the standard Elastic Net within our sTF-TWAS framework.
 
 We processed one chromosome at a time by executing the below code, take chromsome 1 as an example:\
+
 `Rscript ./code/transTF_TWAS.R  1`
 
 ### References: 
