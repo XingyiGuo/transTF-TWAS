@@ -7,12 +7,12 @@ Transcriptome-wide association studies (TWAS) have been successful in identifyin
 
 ## Methods
 
-### : Step I:cis-eQTL discovery of TFs
+### Step I:cis-eQTL discovery of TFs
 To determine a set of the cis-regulatory variants that potentially regulate TF expression (namely TF-cis-regulatory-variants), we first prioritized putative regulatory variants by only including TF-occupied variants that are located in DNase I hypersensitive sites (DHSs) (https://www.meuleman.org/research/dhsindex/), enhancer regions (http://compbio.mit.edu/epimap) and promoter regions (https://fantom.gsc.riken.jp/5/data/). Of them, the significant associations between a TF and its cis-genetic variants were identified at a nominal p-value < 0.05, based on the eQTL analysis in both target tissues and whole blood samples using data from GTEx portal (https://www.gtexportal.org/home/datasets/) and eQTLGen (https://www.eqtlgen.org/cis-eqtls.html). Furthermore, we also analyzed epigenetic data to search regulating evidence by these variants through interactions with proximal promoters or distal enhancer-promoter regions. Specifically, we examined if these variants are located in the promoter region of a TF (TSS +/- 2K) or enhance region with an evidence of the enhancer linking to the TF based on expression-enhancer activity correlation across 833 cell-types from the EpiMap repository (https://personal.broadinstitute.org/cboix/epimap/links/links_corr_only/), as well as chromatin-chromatin interaction data from the 4D genomics (https://4dgenome.research.chop.edu/Tables/4DGenome_HomoSapiens_hg19.txt) and previous literature[1]. Finally, the TF-cis-regulatory-variants were identified based on the significant associations from eQTL results, and the regulatory evidence from the variants linked to the TF. 
 
 `./code/WriteTFeQTL.py`
 
-### : Step II: TF-gene pair discovery
+### Step II: TF-gene pair discovery
 We next characterized each gene potentially regulated by all possible susceptible TFs based on the evidence of their TF-DNA binding sites that are located in its flanking 20Kb of TSS (i.e., number of G TFs). We included all TF-cis-regulatory-variants regards to each possible susceptible TF as the trans-located variants for each target gene. 
 
 `./code/WriteCSVFile.py`
@@ -26,6 +26,7 @@ GREB1_2,2,10494743,2,1,1,1,1,2,0,2, … …
 FOXA1_1,14,37708623,0,0,0,1,1,1,0, … … 
 FOXA1_2,14,37709692,0,1,0,1,0,1,0, … … 
 … …
+
 **Prepare other input data** \
 **1) Gene expression file** \
 Take the breast cancer as an example. The fully processed, filtered and normalized gene expression matrices in bed format ("Breast_Mammary.v8.normalized_expression.bed") for prostate tissue was downloaded from GTEx portal (https://gtexportal.org/home/datasets). We included 151 samples in our analysis and removed sex chromosomes, by which we generated a new file named "Breast_Mammary.v8.normalized_expression.no_sex.bed". The covariates used in eQTL analysis, including top five genotyping principal components (PCs), were obtained from GTEx_Analysis_v8_eQTL_covariates.tar.gz, which was downloaded from GTEx portal (https://gtexportal.org/home/datasets). Then, we further performed a probabilistic estimation of expression residuals (PEER) analysis to adjust for top five genotyping PCs, age, and other potential confounding factors (PEERs)[2] for downstream prediction model building. There is a description of how to download and use the PEER tool here: https://github.com/PMBio/peer/wiki/Tutorial. The command that we used is shown as below:
